@@ -1,6 +1,33 @@
 # Skill Catalog
 
-## dx-core plugin — 44 skills
+## Primary Skills — Start Here
+
+These 7 skills cover 90% of use cases. Each is a coordinator that handles its phase end-to-end.
+
+| Skill | Invocation | What It Does | When to Use |
+|-------|-----------|-------------|-------------|
+| dx-req | `/dx-req <id>` | Fetch ticket, validate readiness, distill requirements, research codebase | Starting any story or feature |
+| dx-plan | `/dx-plan` | Generate implementation plan with step tracking | After requirements, before coding |
+| dx-step-all | `/dx-step-all` | Execute all plan steps with auto-fix on failure | Hands-free implementation |
+| dx-pr | `/dx-pr` | Commit, push, create PR linked to ticket | Code is done, ready to submit |
+| dx-agent-all | `/dx-agent-all <id>` | Full pipeline: requirements through PR in one command | Simple stories, hands-free delivery |
+| dx-figma-all | `/dx-figma-all [url]` | Extract design, generate prototype, verify visually | Figma design-to-code |
+| dx-bug-all | `/dx-bug-all <id>` | Triage, fix, verify, PR — full bug lifecycle | Bug reports |
+
+### Partial Flow — Jump In Anywhere
+
+Each skill reads from local spec files (`.ai/specs/<id>-<slug>/`), not from the previous skill's session:
+
+- **Already have requirements?** Skip to `/dx-plan`
+- **Already have a plan?** Skip to `/dx-step-all`
+- **Coded manually?** Run `/dx-step-verify` then `/dx-pr`
+- **Just need a PR?** Run `/dx-pr` directly
+
+---
+
+## All Skills — Full Catalog
+
+## dx-core plugin
 
 ### Estimation — 1 skill
 
@@ -27,13 +54,14 @@
 | dx-figma-prototype | `/dx-figma-prototype` | `<work-item-id>` (optional) | Research project conventions (2 parallel agents) + generate high-fidelity standalone HTML/CSS prototype | `figma-conventions.md`, `prototype/index.html`, `prototype/styles.css` |
 | dx-figma-verify | `/dx-figma-verify` | `<work-item-id>` (optional) | Visually verify prototype against Figma reference screenshot. Compares, fixes gaps (max 2 rounds). | `figma-gaps.md`, `prototype/prototype-screenshot.png` |
 
-### Planning (`dx-plan-*`) — 3 skills
+### Planning (`dx-plan-*`) — 4 skills
 
 | Skill | Invocation | Argument | Description | Output |
 |-------|-----------|----------|-------------|--------|
-| dx-plan | `/dx-plan` | `<work-item-id>` (optional) | Generate step-by-step implementation plan with status tracking. Tags steps with repo markers (e.g., `[repo: ui]`) when the plan spans multiple repos. Optionally invokes `superpowers:brainstorming` for design exploration before planning. | `implement.md` |
+| dx-plan | `/dx-plan` | `<work-item-id>` (optional) | Generate step-by-step implementation plan with status tracking. Tags steps with repo markers (e.g., `[repo: ui]`) when the plan spans multiple repos. Reads cross-ticket patterns from `.ai/graph/nodes/patterns/`. Optionally invokes `superpowers:brainstorming` for design exploration before planning. | `implement.md` |
 | dx-plan-validate | `/dx-plan-validate` | `<work-item-id>` (optional) | Verify plan covers all requirements, no extras, dependencies correct | Warnings/OK |
 | dx-plan-resolve | `/dx-plan-resolve` | `<work-item-id>` (optional) | Research and fix risks flagged by validation | Updated `implement.md` |
+| dx-pattern-extract | `/dx-pattern-extract` | `[--dry-run]` (optional) | Scan completed specs for recurring decisions/approaches. Promotes patterns appearing in 3+ tickets to `.ai/graph/nodes/patterns/` for cross-ticket knowledge reuse. | Pattern YAML files |
 
 ### Execution (`dx-step-*`) — 5 skills
 
@@ -81,11 +109,20 @@
 | dx-doc-gen | `/dx-doc-gen` | `<work-item-id>` | Generate wiki page as demo walkthrough: Summary, Design Reference, What Changed and Why, QA URLs, Dialog/FE screenshots, Figma comparison, Authoring Guide. Screenshots use repo-relative paths. Posts to ADO Wiki/Confluence. | `docs/wiki-page.md` |
 | dx-doc-retro | `/dx-doc-retro` | `<work-item-id>` | Retroactive wiki docs for completed stories — fetches ADO story, finds linked PRs, searches codebase, generates simplified docs. No spec files needed. | `docs/wiki-page.md` |
 
-### Quality — 1 skill
+### Decision Support — 1 skill
+
+| Skill | Invocation | Argument | Description | Output |
+|-------|-----------|----------|-------------|--------|
+| dx-council | `/dx-council` | `<question or 'the plan' / 'the implementation'>` | Run a decision through an LLM Council — 3 advisors (Critic, Architect, Operator) analyze independently, peer-review anonymously, chairman synthesizes verdict. Context shortcuts: `council the plan`, `council the implementation`. Adapted from Karpathy's LLM Council. | `council-transcript.md` |
+
+### Quality & Hardening — 4 skills
 
 | Skill | Invocation | Argument | Description | Output |
 |-------|-----------|----------|-------------|--------|
 | dx-axe | `/dx-axe` | `<URL> [--fix] [--standard wcag2aa\|wcag21aa]` | Accessibility testing using axe MCP Server — analyze violations, get remediation guidance, apply fixes, verify. Requires Docker + Axe DevTools API key. | Violation report, fixes |
+| dx-perf | `/dx-perf` | `[frontend\|backend\|bundle\|all]` | Performance audit — measure baseline, identify bottlenecks (Core Web Vitals, N+1 queries, bundle size), fix, verify improvement with evidence. Measurement-first approach. | Performance report |
+| dx-security | `/dx-security` | `[changes\|full]` | Security hardening audit — OWASP Top 10 prevention, secrets scan, dependency audit, input validation, auth review. Three-tier boundary system (Always/Ask/Never). Uses `model: opus`. | Security audit report |
+| dx-simplify | `/dx-simplify` | `[file path or directory]` | Code simplification — reduce complexity while maintaining behavioral equivalence. Chesterton's Fence (understand before changing), Rule of 500, dead code removal. Uses `model: opus`. | Simplification report |
 
 ### Sync — 1 skill
 
@@ -108,7 +145,7 @@
 
 ---
 
-## dx-hub plugin — 4 skills
+## dx-hub plugin
 
 Multi-repo orchestration plugin. Dispatches tickets to independent Claude Code sessions in VS Code terminals — one per repo. Each session has its own CWD, full plugin access, and MCP tools.
 
@@ -155,7 +192,7 @@ dx-bug-all ─┬─ dx-bug-triage
 dx-req-dod ── (standalone, needs wiki-dod-url in config + linked PR in ADO, includes auto-fix)
 ```
 
-## dx-aem plugin — 12 skills
+## dx-aem plugin
 
 ### Verification (4)
 
@@ -187,13 +224,13 @@ dx-req-dod ── (standalone, needs wiki-dod-url in config + linked PR in ADO, 
 | aem-component | `/aem-component` | `<component-name>` | Find all source files, AEM pages, and dialog fields for a component (multi-platform, data-driven) | Component report |
 | aem-page-search | `/aem-page-search` | `<component-name>` | Find all AEM pages using a specific component | Page list |
 | aem-refresh | `/aem-refresh` | none | Update `.ai/project/` seed data from plugin, external docs repo, or manual sources | Seed data files |
-| aem-doctor | `/aem-doctor` | `[components\|osgi\|dispatcher\|all]` | Check AEM project infrastructure health | Status report |
+| aem-doctor | `/aem-doctor` | `[components\|osgi\|dispatcher\|content\|code\|all]` | Check AEM project infrastructure health — includes code anti-pattern scan | Status report |
 
 ---
 
 ---
 
-## dx-automation plugin (11 skills)
+## dx-automation plugin
 
 > Requires: `dx-core` plugin installed. Also requires AWS CLI and Azure CLI configured.
 >

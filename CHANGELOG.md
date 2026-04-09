@@ -1,3 +1,233 @@
+# [2.104.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.103.0...v2.104.0) (2026-04-06)
+
+
+### Features
+
+* link side banner to Dragan Filipovic's LinkedIn profile ([b8989bf](https://github.com/easingthemes/dx-aem-flow/commit/b8989bfc27b9287b7d7b729b5efae89249bab7b6))
+
+# [2.103.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.102.1...v2.103.0) (2026-04-06)
+
+
+### Bug Fixes
+
+* move platform footnote to bottom of homepage ([3064ead](https://github.com/easingthemes/dx-aem-flow/commit/3064eada45672dee61f24e0813459b757bf6397b))
+* update platform footnote to mention open standards and tweaks ([1b2fd1a](https://github.com/easingthemes/dx-aem-flow/commit/1b2fd1a2ccab9400f2993cd3c060940434896fdd))
+
+
+### Features
+
+* add footnote clarifying tested vs supported platforms ([ecdce60](https://github.com/easingthemes/dx-aem-flow/commit/ecdce6062c3273480df716c0eabf736a2708c6ea))
+* expand AI platforms count from 3 to 10 ([cc9c371](https://github.com/easingthemes/dx-aem-flow/commit/cc9c3713a547abfd4959e87528bc569a9077ae20))
+
+## [2.102.1](https://github.com/easingthemes/dx-aem-flow/compare/v2.102.0...v2.102.1) (2026-04-06)
+
+
+### Bug Fixes
+
+* clarify SEO descriptions to focus on full agentic workflow ([19ef928](https://github.com/easingthemes/dx-aem-flow/commit/19ef928c8450f4e3da3a377ae9ec98475a486ba9))
+
+# [2.102.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.101.0...v2.102.0) (2026-04-06)
+
+
+### Features
+
+* tiered skill catalog and complexity hotspot fixes ([ccd42d5](https://github.com/easingthemes/dx-aem-flow/commit/ccd42d57182c6c344d1786785b212ed9dd99e7e0))
+
+# [2.101.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.100.1...v2.101.0) (2026-04-06)
+
+
+### Features
+
+* **aem-doctor:** add code anti-pattern scanning ([473fee5](https://github.com/easingthemes/dx-aem-flow/commit/473fee52f1ee75eb9c8fefd40b466cc274dd4ab2))
+
+## [2.100.1](https://github.com/easingthemes/dx-aem-flow/compare/v2.100.0...v2.100.1) (2026-04-05)
+
+
+### Bug Fixes
+
+* restore counts where they serve a functional purpose ([7891dd8](https://github.com/easingthemes/dx-aem-flow/commit/7891dd882a2471796fbc0627eef917b2d4c1256a))
+
+# [2.100.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.99.0...v2.100.0) (2026-04-05)
+
+
+### Features
+
+* Phase 5 — graph edges with typed relationships ([3dd3d88](https://github.com/easingthemes/dx-aem-flow/commit/3dd3d883ecf8dbd6b04dce1f36f027ac41134469))
+
+# [2.99.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.98.0...v2.99.0) (2026-04-05)
+
+
+### Features
+
+* enrich marketplace metadata and plugin keywords for skill platform discoverability ([19855a9](https://github.com/easingthemes/dx-aem-flow/commit/19855a924a00247f725ac5e6b8ede6efabc3c605))
+
+# [2.98.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.97.0...v2.98.0) (2026-04-05)
+
+
+### Features
+
+* Phase 4 — decision nodes as structured YAML ([3230bc1](https://github.com/easingthemes/dx-aem-flow/commit/3230bc1466b9edbd60ae44a14feb4dd0a42ba016))
+
+# [2.97.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.96.0...v2.97.0) (2026-04-05)
+
+
+### Bug Fixes
+
+* replace customer-specific data in pattern-schema.md example ([4528b4e](https://github.com/easingthemes/dx-aem-flow/commit/4528b4ea3804d1eed7576fbae7903628d757c240))
+
+
+### Features
+
+* add cross-ticket pattern promotion (context graphs Phase 3) ([43f1a9e](https://github.com/easingthemes/dx-aem-flow/commit/43f1a9e7b53e87a38b29a85fe8db920acaa7414e))
+
+# [2.96.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.95.0...v2.96.0) (2026-04-05)
+
+
+### Features
+
+* add provenance consumers to dx-plan, dx-pr, and dx-step-verify ([0862ef3](https://github.com/easingthemes/dx-aem-flow/commit/0862ef3a77e2a0244e3af1ef54661a09d32b4243))
+
+# [2.95.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.94.0...v2.95.0) (2026-04-05)
+
+
+### Features
+
+* add Key Decisions section to implementation plans ([2a95fc7](https://github.com/easingthemes/dx-aem-flow/commit/2a95fc7c415bc0c3967ae1b9e73e062776c2c7f7)), closes [#76](https://github.com/easingthemes/dx-aem-flow/issues/76)
+
+# [2.94.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.93.0...v2.94.0) (2026-04-05)
+
+
+### Bug Fixes
+
+* remove hardcoded model tiers from provenance examples ([6d62f9b](https://github.com/easingthemes/dx-aem-flow/commit/6d62f9b1968b5651b1c7a74181ef82b9ca4c9822))
+
+
+### Features
+
+* add provenance metadata to all spec output files ([f6d6253](https://github.com/easingthemes/dx-aem-flow/commit/f6d6253296a03fb50f5771f01ce7851b17fb8716))
+
+# [2.93.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.92.0...v2.93.0) (2026-04-05)
+
+
+### Features
+
+* research context graphs for multi-agent shared knowledge ([e786d23](https://github.com/easingthemes/dx-aem-flow/commit/e786d23ee78c5faf40661017012051789a19bee3))
+
+# [2.92.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.91.0...v2.92.0) (2026-04-04)
+
+
+### Features
+
+* **website:** add social media preview image for OG/Twitter cards ([5544543](https://github.com/easingthemes/dx-aem-flow/commit/55445431bd5147bb4df0b116bf8b12d27e7c4e5f))
+
+# [2.91.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.90.0...v2.91.0) (2026-04-04)
+
+
+### Features
+
+* add CI check that stats.ts matches actual plugin counts ([3817311](https://github.com/easingthemes/dx-aem-flow/commit/3817311c0ea5aa89745f9172b8a383c8df979340))
+
+# [2.90.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.89.0...v2.90.0) (2026-04-04)
+
+
+### Bug Fixes
+
+* update all counts to match actual plugin directories ([7f8af27](https://github.com/easingthemes/dx-aem-flow/commit/7f8af27a6186ff97129cadfeb9451938100437fe))
+
+
+### Features
+
+* centralize skill/agent counts into stats.ts config ([5e21e5e](https://github.com/easingthemes/dx-aem-flow/commit/5e21e5eb553be950c3735ed9469b0423dac1efab))
+
+# [2.89.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.88.0...v2.89.0) (2026-04-04)
+
+
+### Features
+
+* add cross-platform agent support (AGENTS.md, Cursor, Gemini, Codex) ([03e6a52](https://github.com/easingthemes/dx-aem-flow/commit/03e6a5227f7f220c0c011b06de7312e253120642))
+* make scaffold agent-agnostic — always generate agents and AGENTS.md ([5cd2b4d](https://github.com/easingthemes/dx-aem-flow/commit/5cd2b4de2c4f314faf2150705faeb2cc0997cb74))
+
+# [2.88.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.87.0...v2.88.0) (2026-04-04)
+
+
+### Bug Fixes
+
+* address PR review comments — stale refs, skill count, effort level ([1fd1235](https://github.com/easingthemes/dx-aem-flow/commit/1fd1235f079b0c72a976702d68107da9e949b7d5))
+
+
+### Features
+
+* add 5 new quality skills and harden existing skills with anti-rationalization ([da71c6d](https://github.com/easingthemes/dx-aem-flow/commit/da71c6d5b01f3a81b45b5c0e455699e99bc81dfd))
+
+# [2.87.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.86.3...v2.87.0) (2026-04-04)
+
+
+### Bug Fixes
+
+* address PR review — update agent count and remove double separator ([49f7976](https://github.com/easingthemes/dx-aem-flow/commit/49f79766825db9ef6f25c84d0cc32309f5fb7931))
+* use config-driven component paths instead of hardcoded globs ([5e1f152](https://github.com/easingthemes/dx-aem-flow/commit/5e1f15208e8891d21edd52e13d151e3ee3c0c24c))
+
+
+### Features
+
+* add component reuse discovery to Figma design-to-code flow ([c2bd81f](https://github.com/easingthemes/dx-aem-flow/commit/c2bd81f053d5f6750282e1f9b5ae03d1e65d69a3))
+
+## [2.86.3](https://github.com/easingthemes/dx-aem-flow/compare/v2.86.2...v2.86.3) (2026-04-02)
+
+
+### Bug Fixes
+
+* **dx-init:** add me.md to gitignore list, guard cross-repo step ([0c4dab0](https://github.com/easingthemes/dx-aem-flow/commit/0c4dab0544088189c7aac57f7283ceaea314192a)), closes [#55](https://github.com/easingthemes/dx-aem-flow/issues/55)
+
+## [2.86.2](https://github.com/easingthemes/dx-aem-flow/compare/v2.86.1...v2.86.2) (2026-04-02)
+
+
+### Bug Fixes
+
+* **docs:** replace marketing superlatives with factual descriptions, highlight AEM MCP server ([5187fe6](https://github.com/easingthemes/dx-aem-flow/commit/5187fe66c22fb394cade83aafaa93c2fe8e125f4))
+
+## [2.86.1](https://github.com/easingthemes/dx-aem-flow/compare/v2.86.0...v2.86.1) (2026-04-02)
+
+
+### Bug Fixes
+
+* **website:** improve bot access — robots.txt, llms.txt, meta tags ([4ce90aa](https://github.com/easingthemes/dx-aem-flow/commit/4ce90aa22e86d2158de5d352df6090f57d091916))
+
+# [2.86.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.85.0...v2.86.0) (2026-04-02)
+
+
+### Features
+
+* **website:** add comprehensive SEO — meta tags, OG, sitemap, structured data ([37ace9c](https://github.com/easingthemes/dx-aem-flow/commit/37ace9ceef7a16c5c28f0fa395e129d5f756592b))
+
+# [2.85.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.84.0...v2.85.0) (2026-04-01)
+
+
+### Bug Fixes
+
+* balance reviewer examples — 2 generic + 2 AEM ([4d70c58](https://github.com/easingthemes/dx-aem-flow/commit/4d70c585207037654c5d7b7b91198692da07d4a1))
+* replace non-existent data-sly-unescape with correct HTL syntax ([b931f71](https://github.com/easingthemes/dx-aem-flow/commit/b931f71d4483da20c21c7c081279b8c20baf6889))
+* use correct HTL syntax in reviewer DROP example ([db0cc8c](https://github.com/easingthemes/dx-aem-flow/commit/db0cc8ced1502556f5dca606e067c88821320e89))
+
+
+### Features
+
+* add few-shot classification examples to dx-code-reviewer agent ([fccbfff](https://github.com/easingthemes/dx-aem-flow/commit/fccbfffbc144475096939e94b857cdcf10334c08))
+
+# [2.84.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.83.0...v2.84.0) (2026-03-31)
+
+
+### Features
+
+* add hook profiles, compaction reminder, and session context auto-loader ([95bb8b1](https://github.com/easingthemes/dx-aem-flow/commit/95bb8b15dc6813e31bec2c86033c128810e3fd85)), closes [#52](https://github.com/easingthemes/dx-aem-flow/issues/52) [-#54](https://github.com/-/issues/54)
+
+# [2.83.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.82.0...v2.83.0) (2026-03-31)
+
+
+### Features
+
+* add dx-council skill — LLM Council for pressure-testing decisions ([17eec36](https://github.com/easingthemes/dx-aem-flow/commit/17eec3603393e79eac2fc3a96fa95038ec2880f0))
+
 # [2.82.0](https://github.com/easingthemes/dx-aem-flow/compare/v2.81.1...v2.82.0) (2026-03-28)
 
 

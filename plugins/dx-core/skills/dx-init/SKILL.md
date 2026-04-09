@@ -163,7 +163,7 @@ This creates:
 - `.claude/rules`, `.claude/hooks`
 - Copies utility scripts to `.ai/lib/` (audit.sh, dx-common.sh, pre-review-checks.sh, plan-metadata.sh, gather-context.sh, ensure-feature-branch.sh, queue-pipeline.sh) with chmod +x
 - Copies `stop-guard.sh` to `.claude/hooks/` with chmod +x
-- Copies output templates to `.ai/templates/` (spec/, wiki/, ado-comments/ — 11 template files)
+- Copies output templates to `.ai/templates/` (spec/, wiki/, ado-comments/)
 - Copies shared rule templates to `.ai/rules/`
 - Copies universal rule templates to `.claude/rules/`
 
@@ -282,6 +282,7 @@ Read `.gitignore` (use Read tool) and check if it already handles `.ai/` or `.ai
 .ai/specs/
 .ai/run-context/
 .ai/research/
+.ai/me.md
 ```
 
 Do NOT auto-modify `.gitignore` — ask the user first.
@@ -565,7 +566,9 @@ Print a summary:
 
 ### 8d. Install cross-repo coordination rule (if multi-repo)
 
-Read `.ai/config.yaml`. If a `repos:` section exists with at least one entry:
+Read `.ai/config.yaml`. If the `repos:` section does not exist or is empty → **skip this step entirely** and move to Step 9.
+
+If a `repos:` section exists with at least one entry:
 
 1. Read `plugins/dx-core/templates/rules/cross-repo.md.template` (use Read tool).
 2. Build `{{REPOS_TABLE}}` from config:
@@ -588,12 +591,10 @@ Read `.ai/config.yaml`. If a `repos:` section exists with at least one entry:
    - If `.claude/rules/cross-repo.md` exists and user has customized it → show diff, ask: **(A) Keep yours**, **(B) Use updated version**, **(C) Merge manually**
 5. Write the result to `.claude/rules/cross-repo.md` (use Write tool).
 
-If `repos:` section does not exist or is empty, skip this step entirely.
-
 ## 9. Copilot Support (optional)
 
 Ask:
-> **Support GitHub Copilot?** When enabled, Copilot agent definitions and instructions are generated alongside Claude Code for VS Code Copilot users.
+> **Support GitHub Copilot?** When enabled, Copilot agent definitions and instructions are generated alongside Claude Code for developers using Copilot Chat across supported development environments (VS Code, JetBrains IDEs...).
 > 1. **No** — Claude Code only (default)
 > 2. **Yes** — generate `.github/agents/` and `copilot-instructions.md`
 

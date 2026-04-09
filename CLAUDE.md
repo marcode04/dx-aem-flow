@@ -6,10 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Four Claude Code plugins for AI-assisted Azure DevOps development workflows. There is no build system — plugins are pure Markdown (skills, agents, rules, templates) with shell helper scripts.
 
-- **dx-core** (`plugins/dx-core/`) — Platform-agnostic ADO/Jira workflow: requirements → planning → execution → review → PR. Works with any tech stack. 44 skills (`dx-*`), 6 agents. 15 Copilot agent templates (incl. coordinators).
-- **dx-hub** (`plugins/dx-hub/`) — Multi-repo orchestration: hub init, config, status. 3 skills (`dx-hub-*`).
-- **dx-aem** (`plugins/dx-aem/`) — AEM-specific verification, QA, and demo capture. Includes AEM project knowledge (seed data). Requires dx. 12 skills (`aem-*`), 6 agents.
-- **dx-automation** (`plugins/dx-automation/`) — Autonomous AI agents (DoR checker, DoD checker, DoD fixer, PR reviewer, PR answerer, BugFix agent, QA agent, DevAgent, DOCAgent, Estimation) running 24/7 as ADO pipelines triggered by AWS Lambda webhooks. Requires dx. 11 skills (`auto-*`).
+- **dx-core** (`plugins/dx-core/`) — Platform-agnostic ADO/Jira workflow: requirements → planning → execution → review → PR. Works with any tech stack. Skills prefixed `dx-*`.
+- **dx-hub** (`plugins/dx-hub/`) — Multi-repo orchestration: hub init, config, status. Skills prefixed `dx-hub-*`.
+- **dx-aem** (`plugins/dx-aem/`) — AEM-specific verification, QA, and demo capture. Includes AEM project knowledge (seed data). Requires dx. Skills prefixed `aem-*`.
+- **dx-automation** (`plugins/dx-automation/`) — Autonomous AI agents (DoR checker, DoD checker, DoD fixer, PR reviewer, PR answerer, BugFix agent, QA agent, DevAgent, DOCAgent, Estimation) running 24/7 as ADO pipelines triggered by AWS Lambda webhooks. Requires dx. Skills prefixed `auto-*`.
 
 AEM project knowledge (seed data) is now built into dx-aem — no separate plugin needed.
 
@@ -27,7 +27,7 @@ AEM project knowledge (seed data) is now built into dx-aem — no separate plugi
 /dx-init
 /aem-init
 
-# Test standalone scaffold (no Claude Code needed)
+# Test standalone scaffold (bootstraps for any AI agent)
 node cli/bin/dx-scaffold.js /tmp/test-project --all
 ```
 
@@ -35,9 +35,27 @@ No compilation, linting, or automated test suite — verify skills manually by r
 
 ### Standalone CLI (`cli/`)
 
-`cli/bin/dx-scaffold.js` is a zero-dependency Node.js utility that replicates `/dx-init` + `/aem-init` output for users without Claude Code. It reads templates from `plugins/` at runtime — no bundling needed. When adding new templates or data files, the scaffold picks them up automatically (it iterates directories). Only changes to the scaffolding logic itself (new file categories, new placeholders) require updating `cli/lib/scaffold.js`.
+`cli/bin/dx-scaffold.js` is a zero-dependency Node.js utility that replicates `/dx-init` + `/aem-init` output for any AI coding agent. It reads templates from `plugins/` at runtime — no bundling needed. When adding new templates or data files, the scaffold picks them up automatically (it iterates directories). Only changes to the scaffolding logic itself (new file categories, new placeholders) require updating `cli/lib/scaffold.js`.
+
+**Always-generated files:** `.github/agents/` (agent definitions) and `AGENTS.md` (agent discovery) are always generated regardless of flags — they're consumed by Copilot CLI, VS Code Chat, Codex CLI, Windsurf, and the Copilot coding agent. The `--copilot` flag only controls extra Copilot-specific files (`copilot-instructions.md`, `.github/README.md`).
 
 ## Architecture
+
+### Cross-Platform Agent Support
+
+This repo supports multiple AI coding agents:
+
+| File | Purpose | Platforms |
+|------|---------|-----------|
+| `CLAUDE.md` | Full contributor guide (primary) | Claude Code |
+| `AGENTS.md` | Cross-tool instructions (subset of CLAUDE.md) | Codex, Copilot, Cursor, Windsurf, Zed, Jules, Gemini CLI |
+| `GEMINI.md` | Gemini CLI context (references AGENTS.md) | Gemini CLI |
+| `gemini-extension.json` | Gemini extension manifest | Gemini CLI |
+| `.codex/INSTALL.md` | Codex skill symlink instructions | Codex |
+| `.claude-plugin/` | Claude Code + Copilot CLI manifests | Claude Code, Copilot CLI |
+| `.cursor-plugin/` | Cursor manifests (with explicit paths) | Cursor |
+
+When updating architecture sections in CLAUDE.md, check if AGENTS.md needs a corresponding update.
 
 ### Four-Plugin Design
 
@@ -45,6 +63,7 @@ Plugins are independently installable. Non-AEM projects only need dx-core (+ dx-
 ```
 plugin/
 ├── .claude-plugin/plugin.json   # Plugin manifest (shared by Claude Code + Copilot CLI)
+├── .cursor-plugin/plugin.json   # Cursor manifest (with explicit skill/agent/hook paths)
 ├── .mcp.json                    # MCP server config
 ├── agents/                      # Agent definitions (*.md with YAML frontmatter)
 ├── skills/                      # Skill directories (*/SKILL.md)
@@ -121,6 +140,18 @@ Plugin hooks and Copilot CLI hooks are **completely separate systems** with no o
 | Agent frontmatter `hooks:` | VS Code Chat only (1.111+) |
 
 To give both platforms the same safety hooks, install to both locations. `/dx-init` step 9h handles this for the branch-guard hook. See the docs site (`website/`) for full details.
+
+### Hook Profiles — `DX_HOOK_PROFILE`
+
+Control hook strictness via the `DX_HOOK_PROFILE` environment variable:
+
+| Profile | Level | Behavior |
+|---------|-------|----------|
+| `minimal` | 1 | Only blocking safety hooks (branch-guard). Skip informational hooks. |
+| `standard` | 2 | **Default.** All hooks enabled. |
+| `strict` | 3 | All hooks + extra guardrails (future use). |
+
+Set in your shell: `export DX_HOOK_PROFILE=minimal` to suppress informational hooks during focused work, or `strict` for CI/pipeline environments. Hook scripts use `source hook-profile.sh && require_profile "standard"` to gate themselves.
 
 ### Hook Authoring — Key Fields
 

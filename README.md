@@ -6,7 +6,7 @@
 [![semantic-release](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Enterprise AI development platform for teams shipping on Azure DevOps and Atlassian. 70+ skills that run identically across **Claude Code**, **GitHub Copilot CLI**, and **VS Code Chat** — from ticket to PR, fully autonomous. Deep AEM specialization built in.
+Enterprise AI development platform for teams shipping on Azure DevOps and Atlassian. 75+ skills that run identically across **Claude Code**, **GitHub Copilot CLI**, and **VS Code Chat** — from ticket to PR, fully autonomous. Deep AEM specialization built in.
 
 ## Why This Exists
 
@@ -15,9 +15,9 @@ Enterprise teams run complex sprints across multiple repos, multiple IDEs, and m
 KAI is a structured development workflow built as a plugin system for enterprise teams. It encodes your entire sprint lifecycle — requirements, planning, execution, review, PR — into **skills** that orchestrate multi-agent pipelines across every major AI platform. A single command like `/dx-req-all` pulls the ticket from Azure DevOps or Jira, validates readiness against your DoR, distills developer requirements, researches the codebase with parallel subagents, and generates a team summary. Each skill chains specialized agents (Opus for deep review, Sonnet for execution, Haiku for lookups), gathers context from multiple sources (tickets, config, codebase, Figma designs, live AEM content), and writes structured output that the next skill picks up automatically.
 
 **What makes it different:**
-- **Every AI platform** — same 70+ skills work identically in Claude Code, GitHub Copilot CLI, and VS Code Chat. Same plugins, same config, same results — regardless of which IDE your team uses.
+- **Every AI platform** — same 75+ skills work identically in Claude Code, GitHub Copilot CLI, and VS Code Chat. Same plugins, same config, same results — regardless of which IDE your team uses.
 - **Enterprise governance** — DoR validation, 6-phase verification gate (compile, lint, test, secret scan, architecture review, AI code review), autonomous PR review, and branch protection. Ship with confidence.
-- **AEM full-flow** — the deepest AI-powered AEM tooling available. Figma → component → dialog inspection → JCR content → editorial QA → browser automation → demo capture. The complete AEM development lifecycle.
+- **AEM full-flow** — purpose-built AEM tooling covering Figma → component → dialog inspection → JCR content → editorial QA → browser automation → demo capture. Includes the [AEM MCP server](https://www.npmjs.com/package/aem-mcp-server) for live dialog and JCR access. The complete AEM development lifecycle, config-driven for your project.
 - **Config-driven, not prompt-driven** — your build commands, branch names, and conventions live in one config file. Every skill reads it. No hardcoded values, no repeated instructions.
 - **Persistent memory between steps** — each skill writes structured output to local files. The next skill picks it up automatically. Sessions can end and resume without losing context.
 - **Autonomous mode** — the same skills that run locally also run unattended as ADO pipeline agents, triggered by webhooks. Tag a ticket, get a verified bugfix with a PR.
@@ -50,25 +50,24 @@ From a local clone:
 
 Full-stack development workflow for Azure DevOps and Jira projects: requirements gathering, implementation planning, step-by-step execution with testing and review, code review, bug fixes, and PR management.
 
-**42 skills, 6 agents.** Works with any tech stack.
+Works with any tech stack.
 
 ### [dx-hub](plugins/dx-hub/) — Multi-Repo Orchestration
 
 Hub directory management for coordinating work across multiple consumer repos — init, config, status.
 
-**3 skills.**
 
 ### [dx-aem](plugins/dx-aem/) — AEM Full-Flow
 
-The complete AEM development lifecycle: component dialog inspection, JCR content, page authoring, editorial QA with browser automation, snapshot/verify lifecycle, and demo capture. The deepest AI-powered AEM tooling available.
+The complete AEM development lifecycle: component dialog inspection, JCR content, page authoring, editorial QA with browser automation, snapshot/verify lifecycle, and demo capture. Includes the [AEM MCP server](https://www.npmjs.com/package/aem-mcp-server) for live JCR and dialog access. Purpose-built for AEM Cloud and on-premise projects.
 
-**12 skills, 6 agents.** Requires dx plugin.
+Requires dx plugin.
 
 ### [dx-automation](plugins/dx-automation/) — Autonomous Agents
 
 Autonomous AI agents (DoR checker, DoD checker, DoD fixer, PR reviewer, PR answerer, BugFix agent, QA agent, DevAgent, DOCAgent) running 24/7 as ADO pipelines triggered by AWS Lambda webhooks.
 
-**11 skills.** Requires dx plugin.
+Requires dx plugin.
 
 ## Client-Specific Plugins
 
@@ -76,14 +75,16 @@ Client-specific plugins can live alongside these plugins for project-specific en
 
 ## Quick Start
 
-### With Claude Code (interactive)
+Three ways to initialize — all produce the same project structure:
+
+### Claude Code
 
 ```bash
-# 1. Install
+# 1. Install plugins
 /plugin marketplace add easingthemes/dx-aem-flow
 /plugin install dx-core@dx-aem-flow
 
-# 2. Initialize your project
+# 2. Initialize (interactive — detects your project, asks a few questions)
 /dx-init
 
 # 3. Work on a story
@@ -95,18 +96,47 @@ Client-specific plugins can live alongside these plugins for project-specific en
 /dx-pr                      # Create pull request
 ```
 
-### Without Claude Code (standalone scaffold)
+### GitHub Copilot CLI
 
-For users who don't have Claude Code, the CLI utility creates the same project structure with default values:
+```bash
+# 1. Install plugins (same format, same skills)
+/plugin install easingthemes/dx-aem-flow/dx-core
+
+# 2. Initialize (same interactive flow)
+/dx-init
+
+# 3. Work on a story — same skills, same agents
+@DxReqAll 2416553          # Full requirements workflow
+@DxPlanExecutor             # Generate and execute plan
+@DxStepAll                  # Execute all steps
+@DxCodeReview               # Code review
+@DxCommit pr                # Commit and create PR
+```
+
+### Standalone scaffold (any agent or no agent)
+
+Bootstrap the project config without installing plugins first. Works with any AI coding agent — Claude Code, Copilot CLI, Codex, or others:
 
 ```bash
 # From a clone of this repo:
-node dx/cli/bin/dx-scaffold.js /path/to/your-project --all
+node cli/bin/dx-scaffold.js /path/to/your-project --all
 
-# Flags: --aem (AEM files), --copilot (Copilot agents), --all (both)
+# Flags: --aem (AEM-specific files), --all (everything)
 ```
 
-Auto-detects git remote, SCM provider, project type, and base branch. Outputs ~144 files with TODO placeholders — edit `.ai/config.yaml` afterwards. See [cli/README.md](cli/README.md) for details.
+Auto-detects git remote, SCM provider, project type, and base branch. Generates config, rules, agents, and `AGENTS.md` — edit `.ai/config.yaml` to set your actual values. See [cli/README.md](cli/README.md) for details.
+
+## Agent Compatibility
+
+These plugins work across the AI coding agent ecosystem at three levels:
+
+| Level | Agents | What Works |
+|-------|--------|------------|
+| **Full workflow** | Claude Code, Copilot CLI | Plugin install, all 75+ skills, agent orchestration, hooks |
+| **Agents + rules** | VS Code Chat, Copilot coding agent, Codex CLI | `.github/agents/`, `AGENTS.md`, rules, MCP servers |
+| **Rules + MCP** | Cursor, Windsurf, Amazon Q, Cline, Continue | Coding conventions from `.claude/rules/`, MCP server configs |
+
+The scaffold generates `AGENTS.md` (read by Codex CLI, Windsurf, Copilot coding agent) and `.github/agents/` (read by VS Code Chat, Copilot CLI) so agent profiles work even without plugin installation.
 
 ## Documentation
 

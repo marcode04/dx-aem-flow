@@ -1,7 +1,7 @@
 {
   "name": "dx-aem",
   "description": "AEM component verification, dialog inspection, demo capture, QA automation, and multi-platform project knowledge for Adobe Experience Manager projects",
-  "version": "2.82.0",
+  "version": "2.104.0",
   "author": {
     "name": "Dragan Filipovic"
   },
@@ -9,5 +9,5 @@
   "repository": "https://github.com/easingthemes/dx-aem-flow",
   "license": "MIT",
   "logo": "./assets/logo.png",
-  "keywords": ["aem", "adobe", "component", "dialog", "verification", "qa", "seed-data", "multi-platform"]
+  "keywords": ["claude-code", "claude-plugin", "agent-skills", "copilot-cli", "cursor", "codex", "aem", "adobe", "adobe-experience-manager", "component", "dialog", "verification", "qa", "seed-data", "multi-platform", "mcp", "skill-marketplace"]
 }

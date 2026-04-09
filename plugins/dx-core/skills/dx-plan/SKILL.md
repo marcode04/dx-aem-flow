@@ -26,6 +26,24 @@ Read these files from `$SPEC_DIR` (in order of importance):
 
 If `research.md` doesn't exist, warn the user: "No research.md found — run `/dx-req` first for a better plan. Proceeding with explain.md only."
 
+### Provenance Check on Inputs
+
+Read `shared/provenance-schema.md` for the schema definition.
+
+After reading each input file, parse its YAML frontmatter `provenance:` block (if present). Evaluate input quality:
+
+1. **research.md provenance:**
+   - If `confidence: low` → warn: "⚠ research.md has low confidence (degraded mode or incomplete data). Plan quality may be affected — consider re-running `/dx-req` with better search hints."
+   - If `confidence: medium` or `high` → no warning needed
+   - If no provenance block → informational: "ℹ research.md has no provenance metadata (pre-migration file). Confidence unknown."
+   - If `model: haiku` → note: "ℹ research.md was produced at Haiku tier. For complex features, consider re-running `/dx-req` at higher tier."
+
+2. **explain.md provenance:**
+   - If `confidence: low` → warn: "⚠ explain.md has low confidence. Requirements may be incomplete — verify with the original ticket."
+   - If no provenance block → skip (informational only, don't block)
+
+**Confidence propagation:** Use the *lowest* confidence from input files as the ceiling for `implement.md` provenance. If research.md is `low`, implement.md cannot be higher than `low` — regardless of planning quality, the plan is only as reliable as its inputs.
+
 Also check for Figma prototype files (from `/dx-figma-prototype`):
 - `figma-conventions.md` — discovered project conventions (design tokens, naming, patterns)
 - `prototype/index.html` — standalone HTML prototype
@@ -33,6 +51,13 @@ Also check for Figma prototype files (from `/dx-figma-prototype`):
 - `figma-extract.md` — raw Figma extraction data
 
 If prototype files exist, the plan MUST reference them. Implementation steps should adapt the prototype into project-native code rather than building from scratch.
+
+**Component Reuse Map:** If `figma-conventions.md` contains a `### Component Reuse Map` section, the plan MUST respect it:
+- Components marked **Reuse as-is** → plan step says "Use existing `<component>` at `<path>`" — NO new file creation
+- Components marked **Extend** → plan step modifies the existing component file, adding the identified variant
+- Components marked **Compose** → plan step assembles from listed existing components — NO new wrapper when composition suffices
+- Components marked **Create new** → plan step creates a new component following the nearest existing pattern
+- **Atomic components (button, image, icon, link, input, badge) should ALWAYS be reused.** A plan step that recreates an existing atomic component is a plan defect.
 
 ## Hub Mode Check
 
@@ -68,7 +93,7 @@ If `.ai/rules/plan-format.md` exists (project override), read and follow it. Oth
 
 If `.github/instructions/` (or `.ai/instructions/`) exists, read instruction files relevant to the file types in this spec — these provide detailed code examples and framework patterns for generating concrete implementation steps.
 
-### Optional: Design Exploration
+### Design Exploration & Decision Capture
 
 If this is a complex feature with multiple valid approaches, check if `superpowers:brainstorming` is available and invoke it to explore the design space before planning.
 
@@ -78,6 +103,47 @@ If this is a complex feature with multiple valid approaches, check if `superpowe
 - Are there unknowns that need spiking first?
 
 If a brainstorming spec already exists in `docs/superpowers/specs/`, read it for design context.
+
+**Decision capture:** Any non-obvious design decision surfaced during exploration MUST be recorded in the `## Key Decisions` section of `implement.md`. This includes:
+- Architecture choices (extend existing component vs create new)
+- Pattern selection (which existing pattern to follow when multiple exist)
+- Scope tradeoffs (what was deliberately excluded and why)
+- Technology choices (when research.md shows multiple viable approaches)
+
+If the change is trivial (single-file edit, config-only, straightforward bug fix) or every decision is obvious from requirements, omit the Key Decisions section.
+
+### Cross-Ticket Pattern Lookup
+
+Check if `.ai/graph/nodes/patterns/` exists and contains YAML files:
+
+```bash
+find .ai/graph/nodes/patterns/ -name "*.yaml" -type f 2>/dev/null
+```
+
+If pattern files exist, read `shared/pattern-schema.md` for the schema, then read each pattern file. Match patterns against the current ticket by:
+
+1. **Tag matching** — compare pattern `tags` against component names, file types, and architectural concepts from `research.md`
+2. **File matching** — compare pattern `files` against files listed in `research.md`'s `## Files Inventory` or `## Key Findings`
+3. **Decision matching** — compare pattern `description` against the current ticket's requirements in `explain.md`
+
+**If relevant patterns found:**
+- Print: "Found <N> relevant patterns from previous tickets"
+- Factor them into design decisions — if a pattern covers this ticket's approach, reference it rather than re-deriving the approach
+- Include a `## Relevant Patterns` section in `implement.md` (before `## Steps`):
+
+```markdown
+## Relevant Patterns
+
+| Pattern | Confidence | Tickets | Relevance |
+|---------|-----------|---------|-----------|
+| <title> | <confidence> | <count> | <why it matches> |
+
+> **<pattern-id>:** <approach summary from pattern>. (from <ticket list>)
+```
+
+- When a plan step relates to a known pattern, reference it in the step's `**What:**` section: "Follow established pattern `<pattern-id>` — <brief approach>."
+
+**If no patterns found** (directory empty or doesn't exist): continue without the section. This is normal for new projects or early tickets.
 
 ## AEM Component Intelligence Rules
 
@@ -136,15 +202,68 @@ If research.md has no Cross-Repo Scope section or scope is "This repo only", do 
 
 Analyze all inputs and write `implement.md` in the same spec directory.
 
+Include the provenance frontmatter block at the top of `implement.md`, before the `# Implementation Plan:` heading. Use `agent: dx-plan`. Set confidence using the propagation rule from the Provenance Check step: the *lowest* input confidence is the ceiling, then apply the standard downgrade rule (no `research.md` → `low`). Default is `medium` when all inputs have `medium` or `high` confidence.
+
 Read `.ai/templates/spec/implement.md.template` and follow that structure exactly. Key rules:
 
 - Every step MUST have `**Status:** pending` (initial state)
 - Steps are ordered by implementation dependency
 - Be specific about property names, types, default values, file paths with line numbers
 - Include code snippets when helpful
+- Key Decisions section: record non-obvious choices with alternatives and rationale. OMIT for trivial changes.
 - Risks section: only REAL technical risks. OMIT if none.
 
-## 5. Status Tracking
+## 5. Write Decision Nodes
+
+If `implement.md` contains a `## Key Decisions` section (i.e., non-trivial decisions were made), externalize each decision as a structured YAML file.
+
+Read `shared/decision-schema.md` for the schema definition.
+
+### When to write
+
+- If the Key Decisions section was **omitted** (trivial change) → skip this step entirely
+- If Key Decisions section **exists** → write one YAML file per decision
+
+### How to write
+
+1. Create the directory if needed:
+```bash
+mkdir -p .ai/graph/nodes/decisions
+```
+
+2. For each decision in the `## Key Decisions` section, write a YAML file to `.ai/graph/nodes/decisions/<ticket>-<slug>.yaml`:
+   - `<ticket>` is the work item ID (from spec directory name)
+   - `<slug>` is a kebab-case summary of the decision title (e.g., `extend-layout-dropdown`)
+   - Map the markdown fields to YAML: `**Chosen:**` → `chosen:`, `**Why:**` → `why:`, `**Alternatives considered:**` → `alternatives:`, `**Affects steps:**` → `affects_steps:`
+   - Set `confidence` from the same propagation logic used for `implement.md` provenance
+   - Set `trust_tier: shared`, `status: active`
+   - Populate `tags` from technology names, component types, and architectural concepts mentioned in the decision
+   - Populate `lineage` with references to the input spec files that informed this decision (e.g., `requirement-<ticket>-raw`, `research-<ticket>`)
+   - Populate `files` from files mentioned in the decision or the affected steps
+
+3. If decision YAML files already exist for this ticket (re-planning), overwrite them. Set `status: superseded` on any old decision files that are no longer in the new plan's Key Decisions section.
+
+### Content parity
+
+The YAML files contain the **same information** as the markdown Key Decisions section — they are the structured counterpart for machine consumption. Do not add or remove decisions between the two formats.
+
+### Write edges
+
+After writing decision nodes, write (or update) the per-ticket edge file. Read `shared/edge-schema.md` for the schema.
+
+```bash
+mkdir -p .ai/graph/edges
+```
+
+Write `.ai/graph/edges/<ticket>.yaml` with edges derived from the planning context:
+
+1. **informed** edges — for each decision node, add edges from `requirement-<ticket>-raw` and `research-<ticket>` to the decision ID (these come from the decision's `lineage` field)
+2. **implemented-as** edges — for each decision node, add edges from the decision ID to `step-<ticket>-<N>` for each step in `affects_steps`
+3. **reuses** edges — if a plan step references a pattern from `## Relevant Patterns`, add an edge from `step-<ticket>-<N>` to the pattern ID
+
+If the edge file already exists (re-planning), replace all edges where `agent: dx-plan` but preserve edges from other agents (e.g., `dx-step-verify`).
+
+## 6. Status Tracking
 
 Every step MUST have a `**Status:**` line with one of:
 - `pending` — not yet started (initial state)
@@ -154,7 +273,7 @@ Every step MUST have a `**Status:**` line with one of:
 
 The step-* skills update these statuses as they execute.
 
-## 6. Planning Principles
+## 7. Planning Principles
 
 - **Reuse before create** — if research.md's "Existing Implementation Check" shows existing code covers a requirement (✅ or ⚡), the step MUST reuse/extend that code. Never create a new utility, helper, service, or component when an existing one can be extended. If research.md doesn't have this section, search the codebase yourself before planning a "Create new" step.
 - **Every step references specific files and line numbers** from research.md
@@ -170,13 +289,14 @@ The step-* skills update these statuses as they execute.
 - **No time estimates**
 - **Scale to complexity** — simple change = 3-4 steps, complex feature = 10+
 
-## 7. Present Summary
+## 8. Present Summary
 
 ```markdown
 ## implement.md created
 
 **<Title>**
 - Steps: <count> (all pending)
+- Key decisions: <count or "none"> (decision nodes written to `.ai/graph/nodes/decisions/`)
 - Files to modify: <count>
 - Files to create: <count>
 - Tests planned: <count> unit, manual verification included
@@ -194,7 +314,7 @@ The step-* skills update these statuses as they execute.
 ```
 /dx-plan 2416553
 ```
-Reads `.ai/specs/2416553-add-pod-count-dropdown/explain.md` and `research.md`, generates `implement.md` with 6 steps covering model changes, dialog updates, HTL template, JS logic, SCSS, and tests. All steps start as `pending`.
+Reads `.ai/specs/2416553-add-layout-switcher/explain.md` and `research.md`, generates `implement.md` with 6 steps covering model changes, dialog updates, HTL template, JS logic, SCSS, and tests. All steps start as `pending`.
 
 ### Re-run after research update
 ```
@@ -242,6 +362,16 @@ Change set identified →
 **Decision:** EXTEND — add phone regex to existing `validateField()`. Don't create new util.
 **Why:** Existing utility covers >70% of need. Only a new regex pattern is needed.
 
+**Key Decision entry:**
+```markdown
+### Form validation approach
+**Chosen:** Extend existing `validateField()` in `forms.js`
+**Why:** Covers >70% of need — only a new regex pattern is required
+**Alternatives considered:**
+- New `phoneValidator.js` utility — rejected because existing utility handles all other field types; a separate file fragments validation logic
+**Affects steps:** 2
+```
+
 ### When to Create New
 **Scenario:** Need color-coded severity badge component for QA dashboard
 **Discovery:** Closest match is `HighlightBox` (callout alert) — wrong abstraction (alert vs badge)
@@ -269,6 +399,30 @@ Before presenting the generated plan:
 - [ ] Every step lists ≥1 file in `**Files:**`
 - [ ] No duplicate step numbers
 - [ ] Steps ordered by dependency (no forward references)
+
+## Anti-Rationalization
+
+Common excuses for weak planning — and why they're wrong:
+
+| False Logic | Reality Check |
+|---|---|
+| "I'll figure it out as I code" | Coding without a plan produces twice the rework. Plan first, code once. |
+| "The requirements are obvious" | "Obvious" requirements produce the most bugs. Write them down explicitly. |
+| "We don't need tests in the plan" | Every step needs a verification command. Untested steps are unverified steps. |
+| "I'll create a new utility for this" | Search first. 80% of the time an existing utility covers the need. |
+| "This is too simple for a plan" | If it touches >2 files, it needs a plan. "Simple" changes cause unexpected ripple effects. |
+| "I'll plan all the edge cases later" | Edge cases discovered during coding cause scope creep and rework. Surface them now. |
+
+## Risk-First Slicing
+
+When ordering steps, tackle highest-uncertainty pieces first:
+
+- **Unknown APIs or integrations** → spike early, fail fast
+- **Core data model changes** → establish early, everything depends on them
+- **Complex algorithms** → prove feasibility before building UI around them
+- **Simple UI wiring** → leave for last, lowest risk
+
+**Change sizing:** Aim for steps that produce ~100 lines of diff each. Smaller is reviewable; larger hides problems.
 
 ## Rules
 

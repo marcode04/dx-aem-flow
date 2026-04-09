@@ -63,6 +63,12 @@ Read from `$SPEC_DIR`:
 - `implement.md` — the full plan with all steps
 - `explain.md` — original requirements
 
+**Provenance awareness:** Parse the `provenance:` frontmatter from `implement.md` and `research.md` (if it exists). Report upstream confidence in the pre-review output:
+
+- If `implement.md` has `confidence: low` → print: "⚠ Plan was generated with low confidence — applying extra scrutiny to code review."
+- If `research.md` exists and has `confidence: low` → print: "⚠ Research had low confidence — verify file paths and patterns are correct."
+- Pass upstream confidence info to the code review subagent (in the Review Context section) so the reviewer knows to apply extra scrutiny to low-confidence plans.
+
 ### Run pre-review checks (compile/lint/test/secret/arch)
 
 Run the 5-phase pre-review gate before the expensive code review:
@@ -161,6 +167,12 @@ Use the Task tool with `dx-code-reviewer` subagent type (if available), otherwis
 
 ## Review Context
 
+### Upstream Provenance
+Plan confidence: <confidence from implement.md provenance, or "unknown" if no provenance>
+Research confidence: <confidence from research.md provenance, or "not available">
+<If any confidence is "low":>
+NOTE: Low-confidence upstream inputs — apply extra scrutiny to file paths, API usage, and pattern references that may be based on incomplete research.
+
 ### What Was Implemented
 <Summary from implement.md — list all completed steps>
 
@@ -237,6 +249,25 @@ git diff --stat $BASE_SHA..$HEAD_SHA
 Loop back to **Dispatch code review subagent** with the updated diff.
 
 ### Report PASS
+
+**Provenance update:** If `implement.md` has a provenance frontmatter block, update `verified: false` to `verified: true`. If it has no provenance frontmatter (pre-migration file), skip this update.
+
+**Edge update:** If `.ai/graph/edges/<ticket>.yaml` exists (written by dx-plan), append `verified-by` edges. Read `shared/edge-schema.md` for the schema.
+
+1. Read the existing edge file
+2. Find all active decision nodes for this ticket: `find .ai/graph/nodes/decisions/<ticket>-*.yaml`
+3. For each decision node with `status: active`, append an edge:
+   ```yaml
+   - from: attestation-<ticket>-verify
+     to: <decision-id>
+     type: verified-by
+     created: <ISO-8601>
+     agent: dx-step-verify
+   ```
+4. Deduplicate: skip if a `verified-by` edge already exists for that decision
+5. Update the `updated` timestamp on the edge file
+
+If no edge file exists (pre-Phase 5 ticket or no decisions were made), skip this step silently.
 
 Before claiming all phases passed, invoke `superpowers:verification-before-completion` if available.
 
@@ -378,6 +409,20 @@ Return verdict so the pipeline STOPS. List remaining issues clearly. The calling
 - **"Secret patterns detected" false positive**
   **Cause:** A test fixture or config file contains a string matching the secret pattern regex (e.g., `password=test123`).
   **Fix:** Verify the flagged content is not a real secret. If it's a false positive, the skill stops at Phase 4 — you'll need to proceed manually or adjust the secret scan patterns.
+
+## Anti-Rationalization
+
+Common excuses for skipping or weakening verification — and why they're wrong:
+
+| False Logic | Reality Check |
+|---|---|
+| "Tests pass, that's enough" | Tests are necessary but not sufficient. They prove what you tested, not what you didn't. |
+| "AI-generated code is fine — it compiled" | AI-generated code has higher false-confidence risk. Review it MORE carefully, not less. |
+| "I wrote it, so I know it's correct" | Author blindness is real. The reviewer catches what the author's mental model skips. |
+| "We'll clean it up later" | Deferred cleanup rarely happens. Technical debt compounds like interest. |
+| "It's a small change, no review needed" | Small changes cause big outages. The 2-line off-by-one is the classic production incident. |
+| "The review is slowing us down" | Shipping a bug to production is slower. Reviews are the fastest way to catch issues. |
+| "This is just a config change" | Config changes can break entire environments. They deserve the same scrutiny as code. |
 
 ## Rules
 

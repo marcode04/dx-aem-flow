@@ -2,6 +2,7 @@
 layout: ../../layouts/SidebarLayout.astro
 title: Agent Catalog
 sidebar: reference
+description: "Catalog of KAI agents — specialized AI personas for code review, file resolution, documentation search, and AEM inspection."
 ---
 
 import PageHero from '../../components/PageHero.astro';
@@ -15,7 +16,7 @@ import { stats } from '../../config/stats';
 
 <PageHero
   title="Agent Catalog"
-  subtitle="13 Claude Code agents + 25 Copilot CLI agents across two plugins"
+  subtitle={`${stats.claudeAgents} Claude Code agents + ${stats.copilotAgents} Copilot CLI agents across two plugins`}
 />
 
 {/* ════════════════════════════════════════════════════════════════════════ */}
@@ -207,7 +208,7 @@ import { stats } from '../../config/stats';
   badge="Copilot CLI"
   badgeColor="warning"
   title="dx-core Copilot Agents"
-  subtitle="15 agents using @AgentName invocation syntax"
+  subtitle={`${stats.copilotDxCoreAgents} agents using @AgentName invocation syntax`}
   bg="primary"
 />
 <Section>
@@ -244,7 +245,7 @@ import { stats } from '../../config/stats';
   badge="Copilot CLI"
   badgeColor="warning"
   title="dx-aem Copilot Agents"
-  subtitle="10 agents for the AEM full-flow lifecycle"
+  subtitle={`${stats.copilotDxAemAgents} agents for the AEM full-flow lifecycle`}
   bg="alt"
 />
 <Section>

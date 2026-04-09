@@ -63,17 +63,17 @@ const pluginsDir = path.resolve(__dirname, '..', '..', 'plugins');
 
 if (flags.help) {
   console.log(`
-dx-scaffold — Standalone scaffolding for dx-aem-flow plugin ecosystem
+dx-scaffold — Bootstrap project config for any AI coding agent
 
-Creates the same project structure as /dx-init + /aem-init Claude Code skills,
-configured with auto-detected or default values. No Claude Code required.
+Creates the same project structure as /dx-init + /aem-init skills.
+Works with Claude Code, Copilot CLI, Codex CLI, VS Code Chat, and others.
 
 Usage:
   dx-scaffold [target-dir] [flags]
 
 Flags:
   --aem        Include AEM-specific files (rules, instructions, seed data)
-  --copilot    Include GitHub Copilot agents and skills
+  --copilot    Include extra Copilot files (copilot-instructions.md, README)
   --all        Enable all features (--aem + --copilot)
   --auto-commit[=true|false]
                Set preferences.auto-commit in generated config.yaml
@@ -86,10 +86,10 @@ Flags:
   --help, -h   Show this help
 
 Examples:
-  # Scaffold in current directory (base dx workflow only)
+  # Scaffold in current directory (base workflow + agents)
   node dx-scaffold.js
 
-  # Scaffold AEM project with Copilot support
+  # Full scaffold for AEM project
   node dx-scaffold.js --all
 
   # Scaffold into a specific directory
@@ -98,17 +98,17 @@ Examples:
   # Scaffold with pipeline preferences
   node dx-scaffold.js /path/to/my-project --auto-commit=true --auto-pr=false
 
-Output Structure:
+Output (always generated):
   .ai/config.yaml         Project configuration (SCM, build, AEM)
   .ai/project.yaml        Detected project profile
-  .ai/README.md           Workflow quick reference
   .ai/rules/              Shared AI behavior rules
-  .ai/docs/               Documentation (10 files)
   .ai/lib/                Utility shell scripts
   .ai/templates/          Output templates for skills
   .claude/rules/          Auto-loaded coding conventions
   .claude/hooks/          Lifecycle hooks
   .mcp.json               MCP server configuration
+  .github/agents/         Agent definitions (Copilot CLI, VS Code Chat, Codex)
+  AGENTS.md               Agent discovery file (Codex CLI, Windsurf, coding agent)
   agent.index.md          Machine-readable doc map
 
   With --aem:
@@ -117,9 +117,8 @@ Output Structure:
   .github/instructions/   + AEM instruction docs
 
   With --copilot:
-  .github/agents/         Copilot agent definitions
-  .github/skills/         Copilot skill templates
-  .github/copilot-instructions.md
+  .github/copilot-instructions.md   Copilot master instructions
+  .github/README.md                 GitHub AI config overview
 
 After scaffolding, edit .ai/config.yaml to set your actual values.
 `);
@@ -207,7 +206,12 @@ if (flags.aem) {
   console.log('  3. Populate .ai/project/component-index.md with your components');
   console.log('  4. Fill in .ai/project/architecture.md and features.md');
 }
-if (flags.copilot) {
-  console.log('  5. Review .github/agents/ and .github/skills/ for your Copilot setup');
-}
+console.log('');
+console.log('Works with:');
+console.log('  Claude Code   — /plugin install, then /dx-init to refine config interactively');
+console.log('  Copilot CLI   — /plugin install, then /dx-init (same plugins, same skills)');
+console.log('  VS Code Chat  — agents auto-discovered from .github/agents/');
+console.log('  Codex CLI     — reads AGENTS.md and .github/agents/ for project context');
+console.log('  Windsurf      — reads AGENTS.md as always-on instructions');
+console.log('  Others        — .claude/rules/ and .mcp.json provide conventions + MCP tools');
 console.log('');
